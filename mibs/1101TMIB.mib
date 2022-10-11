@@ -1,0 +1,381 @@
+
+TMIB-II DEFINITIONS ::= BEGIN
+
+IMPORTS
+--      ObjectName
+--              FROM RFC1155-SMI
+	DisplayString
+		FROM RFC1213-MIB
+        OBJECT-TYPE
+                FROM RFC-1212
+    	transportation
+    		FROM NEMA;
+
+
+--EXPORTS EVERYTHING
+-- Major groups of the TMIB.
+--  protocols, dynObjMgmt, dynObjDef, dynObjData, profiles, devices
+--  dynObjEntry, dynObjNumber, dynObjIndex, dynObjVariable, dynObjOwner,
+--  dynObjStatus, dynObj1, dynObj2, dynObj3, dynObj4, dynObj5, dynObj6, 
+--  dynObj7, dynObj8, dynObj9, dynObj10, dynObj11, dynObj12, dynObj13;
+
+--This MIB module uses the extended OBJECT-TYPE macro as
+-- defined in RFC-1212;
+
+DisplayString ::=
+              OCTET STRING
+
+Byte ::=        INTEGER (-128..127)
+UByte ::=       INTEGER (0..255)
+
+Short ::=       INTEGER (-32768..32767)
+UShort ::=      INTEGER (0..65535)
+
+Long ::=        INTEGER (-2147483648..2147483647)
+ULong ::=       INTEGER (0..4294967295)
+
+
+ConfigEntryStatus  ::= INTEGER
+   { valid (1),
+     underCreation (2),
+     invalid (3)
+   }
+
+EntryStatus  ::= INTEGER
+	{ valid (1),
+	  underCreation (2),
+	  invalid (3)
+	}
+
+OwnerString ::= DisplayString (SIZE(0..127))
+
+protocols       OBJECT IDENTIFIER ::= { transportation 1 }
+
+layers          OBJECT IDENTIFIER ::= { protocols 1 }
+                  
+profiles        OBJECT IDENTIFIER ::= { protocols 2 }
+
+dynObjMgmt      OBJECT IDENTIFIER ::= { protocols 3 }
+
+   dynObjData      OBJECT IDENTIFIER ::= { dynObjMgmt 2 }
+
+devices         OBJECT IDENTIFIER ::= { transportation 2 }
+
+dynObjDef  OBJECT-TYPE
+   SYNTAX  SEQUENCE OF DynObjEntry
+   ACCESS  not-accessible
+   STATUS  mandatory
+   DESCRIPTION
+      "A list of objects to be included in dynamic objects"
+::= { dynObjMgmt 1 }
+
+dynObjEntry  OBJECT-TYPE
+   SYNTAX  DynObjEntry
+   ACCESS  not-accessible
+   STATUS  mandatory
+   DESCRIPTION
+      "A list of OBJECT IDENTIFIERs that make up a dynamic object"
+   INDEX  { dynObjNumber,  dynObjIndex }
+::= { dynObjDef 1 }
+
+DynObjEntry ::= SEQUENCE {
+   dynObjNumber    INTEGER (1..13),
+   dynObjIndex     INTEGER (1..255),
+   dynObjVariable  OBJECT IDENTIFIER,
+   dynObjOwner     OwnerString,
+   dynObjStatus    EntryStatus  }
+
+dynObjNumber  OBJECT-TYPE
+   SYNTAX  INTEGER ( 1..13)
+   ACCESS  read-only
+   STATUS  mandatory
+   DESCRIPTION
+      "The dynamic object number that this entry is to be associated with."
+::= { dynObjEntry 1 }
+
+dynObjIndex  OBJECT-TYPE
+   SYNTAX  INTEGER (1..255)
+   ACCESS  read-only
+   STATUS  mandatory
+   DESCRIPTION
+      "An index that uniquely identifies an entry in the dynamic object table. Each
+	  entry defines an object that is to be associated with a dynamic object number.
+	  The dynObjIndex determines the  order in which objects are transmitted
+	  for the dynamic object.  The lower dynObjIndex numbers
+	  are transmitted before larger numbers for entries within the same dynamic object."
+::= { dynObjEntry 2 }
+
+dynObjVariable OBJECT-TYPE
+   SYNTAX  OBJECT IDENTIFIER
+   ACCESS  read-write
+   STATUS  mandatory
+   DESCRIPTION
+      "The object identifier of the particular variable to be included in the
+	  specified dynamic object number.  Care must be taken when defining 
+	  dynamic objects that the maximum size of all the objects included in a 
+	  dynamic object do not exceed the maximum packet size of the 
+	  communications network.
+   
+      When set to reference a columnar object, an agent may wish to only
+	  validate the prefix portion of the object identifier.  The suffix or index
+	  portion of an object identifier need not be instantiated or exist at the time
+	  the time a dynObjVariable is defined.
+
+      This object may not be modified unless the associated dynObjStatus object is
+	  equal to underCreation."
+::= { dynObjEntry 3 }
+
+dynObjOwner OBJECT-TYPE
+   SYNTAX  OwnerString
+   ACCESS  read-write
+   STATUS  deprecated
+   DESCRIPTION
+      "This object has been replaced with dynObjConfigOwner.
+      
+      The entity that configured this entry and is therefore using the 
+      resources assigned to it.
+      This object may not be modified if the associated dynObjStatus object is
+	  equal to valid(1).
+	  
+	  This object has been replaced with dynObjConfigOwner."
+::= { dynObjEntry 4 }
+
+dynObjStatus OBJECT-TYPE
+   SYNTAX  EntryStatus
+   ACCESS  read-write
+   STATUS  deprecated
+   DESCRIPTION
+      "This object has been replaced with dynObjConfigOwner.
+      
+      The status of this dynamic object definition entry.  See description of 
+      EntryStatus above for restrictions on accesses
+
+	  This object has been replaced with dynObjConfigStatus."
+::= { dynObjEntry 5 }
+
+dynObj1  OBJECT-TYPE
+   SYNTAX  OCTET STRING
+   ACCESS  read-write
+   STATUS  deprecated
+   DESCRIPTION
+      "The value of this object is determined by the dynObjDef entries with 
+      dynObjNumber equal to 1.  Packed Encoding Rules are utilized to encode
+      the objects for transmission.  This object is intended for use with the 
+	  Simple Transportation Management Protocol, and provides little advantage 
+	  if used with SNMP.
+      If no objects are defined for this dynamic object number, then an error of 
+      noSuchName shall be returned by the agent"
+::= { dynObjData 1 }
+
+dynObj2  OBJECT-TYPE
+   SYNTAX  OCTET STRING
+   ACCESS  read-write
+   STATUS  deprecated
+   DESCRIPTION
+      "The value of this object is determined by the dynObjDef entries with 
+      dynObjNumber equal to 2.  Packed Encoding Rules are utilized to encode
+      the objects for transmission.  This object is intended for use with the 
+	  Simple Transportation Management Protocol, and provides little advantage 
+	  if used with SNMP.
+      If no objects are defined for this dynamic object number, then an error of 
+      noSuchName shall be returned by the agent"
+::= { dynObjData 2 }
+
+dynObj3  OBJECT-TYPE
+   SYNTAX  OCTET STRING
+   ACCESS  read-write
+   STATUS  deprecated
+   DESCRIPTION
+      "The value of this object is determined by the dynObjDef entries with 
+      dynObjNumber equal to 3.  Packed Encoding Rules are utilized to encode
+      the objects for transmission.  This object is intended for use with the 
+	  Simple Transportation Management Protocol, and provides little advantage 
+	  if used with SNMP.
+      If no objects are defined for this dynamic object number, then an error of 
+      noSuchName shall be returned by the agent"
+::= { dynObjData 3 }
+
+dynObj4  OBJECT-TYPE
+   SYNTAX  OCTET STRING
+   ACCESS  read-write
+   STATUS  deprecated
+   DESCRIPTION
+      "The value of this object is determined by the dynObjDef entries with 
+      dynObjNumber equal to 4.  Packed Encoding Rules are utilized to encode
+      the objects for transmission.  This object is intended for use with the 
+	  Simple Transportation Management Protocol, and provides little advantage 
+	  if used with SNMP.
+      If no objects are defined for this dynamic object number, then an error of 
+      noSuchName shall be returned by the agent"
+::= { dynObjData 4 }
+
+dynObj5  OBJECT-TYPE
+   SYNTAX  OCTET STRING
+   ACCESS  read-write
+   STATUS  deprecated
+   DESCRIPTION
+      "The value of this object is determined by the dynObjDef entries with 
+      dynObjNumber equal to 5.  Packed Encoding Rules are utilized to encode
+      the objects for transmission.  This object is intended for use with the 
+	  Simple Transportation Management Protocol, and provides little advantage 
+	  if used with SNMP.
+      If no objects are defined for this dynamic object number, then an error of 
+      noSuchName shall be returned by the agent"
+::= { dynObjData 5 }
+
+dynObj6  OBJECT-TYPE
+   SYNTAX  OCTET STRING
+   ACCESS  read-write
+   STATUS  deprecated
+   DESCRIPTION
+      "The value of this object is determined by the dynObjDef entries with 
+      dynObjNumber equal to 6.  Packed Encoding Rules are utilized to encode
+      the objects for transmission.  This object is intended for use with the 
+	  Simple Transportation Management Protocol, and provides little advantage 
+	  if used with SNMP.
+      If no objects are defined for this dynamic object number, then an error of 
+      noSuchName shall be returned by the agent"
+::= { dynObjData 6 }
+
+dynObj7  OBJECT-TYPE
+   SYNTAX  OCTET STRING
+   ACCESS  read-write
+   STATUS  deprecated
+   DESCRIPTION
+      "The value of this object is determined by the dynObjDef entries with 
+      dynObjNumber equal to 7.  Packed Encoding Rules are utilized to encode
+      the objects for transmission.  This object is intended for use with the 
+      Simple Transportation Management Protocol, and provides little advantage 
+      if used with SNMP.
+      If no objects are defined for this dynamic object number, then an error of 
+      noSuchName shall be returned by the agent"
+::= { dynObjData 7 }
+
+dynObj8  OBJECT-TYPE
+   SYNTAX  OCTET STRING
+   ACCESS  read-write
+   STATUS  deprecated
+   DESCRIPTION
+      "The value of this object is determined by the dynObjDef entries with 
+      dynObjNumber equal to 8.  Packed Encoding Rules are utilized to encode
+      the objects for transmission.  This object is intended for use with the 
+	  Simple Transportation Management Protocol, and provides little advantage 
+	  if used with SNMP.
+      If no objects are defined for this dynamic object number, then an error of 
+      noSuchName shall be returned by the agent"
+::= { dynObjData 8 }
+
+dynObj9  OBJECT-TYPE
+   SYNTAX  OCTET STRING
+   ACCESS  read-write
+   STATUS  deprecated
+   DESCRIPTION
+      "The value of this object is determined by the dynObjDef entries with 
+      dynObjNumber equal to 9.  Packed Encoding Rules are utilized to encode
+      the objects for transmission.  This object is intended for use with the 
+	  Simple Transportation Management Protocol, and provides little advantage 
+	  if used with SNMP.
+      If no objects are defined for this dynamic object number, then an error of 
+      noSuchName shall be returned by the agent"
+::= { dynObjData 9 }
+
+dynObj10  OBJECT-TYPE
+   SYNTAX  OCTET STRING
+   ACCESS  read-write
+   STATUS  deprecated
+   DESCRIPTION
+      "The value of this object is determined by the dynObjDef entries with 
+      dynObjNumber equal to 10.  Packed Encoding Rules are utilized to encode
+      the objects for transmission.  This object is intended for use with the 
+	  Simple Transportation Management Protocol, and provides little advantage 
+	  if used with SNMP.
+      If no objects are defined for this dynamic object number, then an error of 
+      noSuchName shall be returned by the agent"
+::= { dynObjData 10 }
+
+dynObj11  OBJECT-TYPE
+   SYNTAX  OCTET STRING
+   ACCESS  read-write
+   STATUS  deprecated
+   DESCRIPTION
+      "The value of this object is determined by the dynObjDef entries with 
+      dynObjNumber equal to 11.  Packed Encoding Rules are utilized to encode
+      the objects for transmission.  This object is intended for use with the 
+	  Simple Transportation Management Protocol, and provides little advantage 
+	  if used with SNMP.
+      If no objects are defined for this dynamic object number, then an error of 
+      noSuchName shall be returned by the agent"
+::= { dynObjData 11 }
+
+dynObj12  OBJECT-TYPE
+   SYNTAX  OCTET STRING
+   ACCESS  read-write
+   STATUS  deprecated
+   DESCRIPTION
+      "The value of this object is determined by the dynObjDef entries with 
+      dynObjNumber equal to 12.  Packed Encoding Rules are utilized to encode
+      the objects for transmission.  This object is intended for use with the 
+	  Simple Transportation Management Protocol, and provides little advantage 
+	  if used with SNMP.
+      If no objects are defined for this dynamic object number, then an error of 
+      noSuchName shall be returned by the agent"
+::= { dynObjData 12 }
+
+dynObj13  OBJECT-TYPE
+        SYNTAX  OCTET STRING
+   ACCESS  read-write
+   STATUS  deprecated
+   DESCRIPTION
+    "The value of this object is determined by the dynObjDef entries with 
+      dynObjNumber equal to 13.  Packed Encoding Rules are utilized to encode
+      the objects for transmission.  This object is intended for use with the 
+	  Simple Transportation Management Protocol, and provides little advantage 
+	  if used with SNMP.
+      If no objects are defined for this dynamic object number, then an error of 
+      noSuchName shall be returned by the agent"
+::= { dynObjData 13 }
+
+dynObjConfig OBJECT IDENTIFIER ::= { dynObjMgmt 3}
+
+dynObjConfigTable  OBJECT-TYPE
+	SYNTAX  SEQUENCE OF DynObjConfigEntry
+	ACCESS  not-accessible
+	STATUS  mandatory
+	DESCRIPTION
+		"A table consisting of an owner and status for each of the 13 dynamic object definitions."
+::= { dynObjConfig 1 }
+
+dynObjConfigEntry  OBJECT-TYPE
+	SYNTAX  DynObjConfigEntry
+	ACCESS  not-accessible
+	STATUS  mandatory
+	DESCRIPTION
+		"A table consisting of an owner and status for each of the 13 dynamic object definitions."
+	INDEX  { dynObjNumber }
+::= { dynObjConfigTable  1 }
+
+DynObjConfigEntry ::= SEQUENCE {
+	dynObjConfigOwner	OwnerString,
+	dynObjConfigStatus	ConfigEntryStatus  }
+
+dynObjConfigOwner OBJECT-TYPE
+	SYNTAX  OwnerString
+	ACCESS  read-write
+	STATUS  mandatory
+	DESCRIPTION
+		"The entity that configured the associated dynamic object."
+::= { dynObjConfigEntry 1 }
+
+
+dynObjConfigStatus OBJECT-TYPE
+	SYNTAX  ConfigEntryStatus
+	ACCESS  read-write
+	STATUS  mandatory
+	DESCRIPTION
+         "Indicates the state of the associated dynamic object.  Depending on the validity checks that are
+          performed on the dynamic object definition, a set request may or may not be honored.   See
+          Section 4.1.4 for a complete description."
+::= { dynObjConfigEntry 2 }
+
+END -- TMIB-II DEFINITIONS
+

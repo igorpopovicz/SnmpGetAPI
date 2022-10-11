@@ -1,0 +1,17 @@
+
+NEMA DEFINITIONS ::= BEGIN
+
+IMPORTS
+enterprises
+FROM RFC1155-SMI;
+
+EXPORTS -- EVERYTHING
+nema, nemaMgmt, nemaExperimental, nemaPrivate, transportation;
+
+nema 			OBJECT IDENTIFIER ::= { enterprises 1206 }
+nemaMgmt 		OBJECT IDENTIFIER ::= { nema 1 }
+nemaExperimental 	OBJECT IDENTIFIER ::= { nema 2 }
+nemaPrivate 		OBJECT IDENTIFIER ::= { nema 3 }
+transportation 		OBJECT IDENTIFIER ::= { nema 4 }
+
+END -- NEMA_SMI Definitions
