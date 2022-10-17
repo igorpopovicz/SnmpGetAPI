@@ -1,6 +1,5 @@
 #include <net-snmp/net-snmp-config.h>
 #include <net-snmp/net-snmp-includes.h>
-#include <string.h>
 
 int snmpGet(char *oid_string, char *ipPort_string)
 {
@@ -81,40 +80,4 @@ int snmpGet(char *oid_string, char *ipPort_string)
 
     SOCK_CLEANUP;
     return value;
-} /* main() */
-
-
-int main()
-{
-
-  int green  =  snmpGet(".1.3.6.1.4.1.1206.4.2.1.1.4.1.4.1", "192.168.4.23:161");
-  int yellow =  snmpGet(".1.3.6.1.4.1.1206.4.2.1.1.4.1.3.1", "192.168.4.23:161");
-  int red    =  snmpGet(".1.3.6.1.4.1.1206.4.2.1.1.4.1.2.1", "192.168.4.23:161");
-  int oldred;
-  int oldgreen;
-
-  int cont = 0;
-  if(!cont){
-    printf("Green: %02d | Yellow: %02d | Red: %02d\n\r", green, yellow, red);
-    cont++;
-    oldred = red;
-    oldgreen = green;
-  }
-
-  while(1){
-    green  =  snmpGet(".1.3.6.1.4.1.1206.4.2.1.1.4.1.4.1", "192.168.3.23:161");
-    yellow =  snmpGet(".1.3.6.1.4.1.1206.4.2.1.1.4.1.3.1", "192.168.3.23:161");
-    red    =  snmpGet(".1.3.6.1.4.1.1206.4.2.1.1.4.1.2.1", "192.168.3.23:161");
-
-    if(oldred != red || oldgreen != green){
-      printf("Green: %02d | Yellow: %02d | Red: %02d\n\r", green, yellow, red);
-      oldred = red;
-      oldgreen = green;
-    }
-
-  }
-    
-  
-
-  return 0;
 }

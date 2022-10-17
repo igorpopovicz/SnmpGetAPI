@@ -1,0 +1,58 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_OUTPUT_EXCMD	mixed	/number, pattern, mixed, or combineV2/
+!_TAG_OUTPUT_FILESEP	slash	/slash or backslash/
+!_TAG_OUTPUT_MODE	u-ctags	/u-ctags or e-ctags/
+!_TAG_PATTERN_LENGTH_LIMIT	96	/0 for no limit/
+!_TAG_PROC_CWD	/home/popovicz/Projetos/SSMS/SnmpGetAPI/	//
+!_TAG_PROGRAM_AUTHOR	Universal Ctags Team	//
+!_TAG_PROGRAM_NAME	Universal Ctags	/Derived from Exuberant Ctags/
+!_TAG_PROGRAM_URL	https://ctags.io/	/official site/
+!_TAG_PROGRAM_VERSION	5.9.0	//
+BUILDAGENTLIBS	src/Makefile	/^BUILDAGENTLIBS=`$(NET_SNMP_CONFIG) --agent-libs`$/;"	m
+BUILDLIBS	src/Makefile	/^BUILDLIBS=`$(NET_SNMP_CONFIG) --libs`$/;"	m
+CC	src/Makefile	/^CC=gcc$/;"	m
+CFLAGS	src/Makefile	/^CFLAGS=`$(NET_SNMP_CONFIG) --cflags` -Wall -Wextra -Werror \\$/;"	m
+DLFLAGS	src/Makefile	/^DLFLAGS=-fPIC -shared$/;"	m
+NET_SNMP_CONFIG	src/Makefile	/^NET_SNMP_CONFIG=net-snmp-config$/;"	m
+NSTAGENTPLUGINOBJECT_H	src/nstAgentPluginObject.h	/^#define NSTAGENTPLUGINOBJECT_H$/;"	d
+NSTAGENTSUBAGENTOBJECT_H	src/nstAgentSubagentObject.h	/^#define NSTAGENTSUBAGENTOBJECT_H$/;"	d
+Name	src/asyncapp.c	/^  const char *Name;$/;"	m	struct:oid	typeref:typename:const char *	file:
+Oid	src/asyncapp.c	/^  oid Oid[MAX_OID_LEN];$/;"	m	struct:oid	typeref:typename:oid[]	file:
+OidLen	src/asyncapp.c	/^  size_t OidLen;$/;"	m	struct:oid	typeref:typename:size_t	file:
+TARGETS	src/Makefile	/^TARGETS=example-demon main asyncapp$/;"	m
+active_hosts	src/asyncapp.c	/^int active_hosts;			\/* hosts that we have not completed *\/$/;"	v	typeref:typename:int
+all	src/Makefile	/^all: $(TARGETS)$/;"	t
+asyncapp	src/Makefile	/^asyncapp: asyncapp.o$/;"	t
+asynch_response	src/asyncapp.c	/^int asynch_response(int operation, struct snmp_session *sp, int reqid,$/;"	f	typeref:typename:int
+asynchronous	src/asyncapp.c	/^void asynchronous(void)$/;"	f	typeref:typename:void
+clean	src/Makefile	/^clean:$/;"	t
+community	src/asyncapp.c	/^  const char *community;$/;"	m	struct:host	typeref:typename:const char *	file:
+current_oid	src/asyncapp.c	/^  struct oid *current_oid;		\/* How far in our poll are we *\/$/;"	m	struct:session	typeref:struct:oid *	file:
+deinit_nstAgentPluginObject	src/nstAgentPluginObject.c	/^deinit_nstAgentPluginObject(void)$/;"	f	typeref:typename:void
+example-demon	src/Makefile	/^example-demon: example-demon.o nstAgentSubagentObject.o$/;"	t
+host	src/asyncapp.c	/^struct host {$/;"	s	file:
+hosts	src/asyncapp.c	/^} hosts[] = {$/;"	v	typeref:struct:host[]
+init_nstAgentPluginObject	src/nstAgentPluginObject.c	/^init_nstAgentPluginObject(void)$/;"	f	typeref:typename:void
+init_nstAgentSubagentObject	src/nstAgentSubagentObject.c	/^init_nstAgentSubagentObject(void)$/;"	f	typeref:typename:void
+initialize	src/asyncapp.c	/^void initialize (void)$/;"	f	typeref:typename:void
+keep_running	src/example-demon.c	/^static int keep_running;$/;"	v	typeref:typename:int	file:
+main	src/Makefile	/^main: main.o$/;"	t
+main	src/asyncapp.c	/^int main (int argc, char **argv)$/;"	f	typeref:typename:int
+main	src/example-demon.c	/^main (int argc, char **argv) {$/;"	f	typeref:typename:int
+main	src/main.c	/^int main()$/;"	f	typeref:typename:int
+name	src/asyncapp.c	/^  const char *name;$/;"	m	struct:host	typeref:typename:const char *	file:
+nstAgentPluginObject	src/nstAgentPluginObject.c	/^static int      nstAgentPluginObject = 3;$/;"	v	typeref:typename:int	file:
+nstAgentPluginObject.o	src/Makefile	/^nstAgentPluginObject.o: nstAgentPluginObject.c Makefile$/;"	t
+nstAgentPluginObject.so	src/Makefile	/^nstAgentPluginObject.so: nstAgentPluginObject.o Makefile$/;"	t
+nstAgentPluginObject_oid	src/nstAgentPluginObject.c	/^static oid      nstAgentPluginObject_oid[] =$/;"	v	typeref:typename:oid[]	file:
+nstAgentSubagentObject	src/nstAgentSubagentObject.c	/^static long      nstAgentSubagentObject = 2;$/;"	v	typeref:typename:long	file:
+oid	src/asyncapp.c	/^struct oid {$/;"	s	file:
+oids	src/asyncapp.c	/^} oids[] = {$/;"	v	typeref:struct:oid[]
+print_result	src/asyncapp.c	/^int print_result (int status, struct snmp_session *sp, struct snmp_pdu *pdu)$/;"	f	typeref:typename:int
+sess	src/asyncapp.c	/^  struct snmp_session *sess;		\/* SNMP session data *\/$/;"	m	struct:session	typeref:struct:snmp_session *	file:
+session	src/asyncapp.c	/^struct session {$/;"	s	file:
+sessions	src/asyncapp.c	/^} sessions[sizeof(hosts)\/sizeof(hosts[0])];$/;"	v	typeref:struct:session[]
+snmpGet	src/main.c	/^int snmpGet(char *oid_string, char *ipPort_string)$/;"	f	typeref:typename:int
+stop_server	src/example-demon.c	/^stop_server(int a) {$/;"	f	typeref:typename:RETSIGTYPE
+synchronous	src/asyncapp.c	/^void synchronous (void)$/;"	f	typeref:typename:void
