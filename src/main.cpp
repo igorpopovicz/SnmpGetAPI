@@ -4,6 +4,9 @@
 #include "../inc/snmpGet.h"
 
 #include <string.h>
+#include <iostream>
+#include <bitset>
+#include <vector>
 
 //ImGui
 #include "../imgui/imgui.h"
@@ -16,6 +19,21 @@ static void glfw_error_callback(int error, const char* description)
 {
     fprintf(stderr, "Glfw Error %d: %s\n", error, description);
 }
+
+void getPhaseActive(int phaseActive[16], char *ipPortString)
+{
+  for(int x=1; x < 16; x++)
+  {
+    char oid[34];
+    sprintf(oid, ".1.3.6.1.4.1.1206.4.2.1.1.2.1.2.%d",x);
+    int valor = snmpGet(oid, ipPortString);
+    if(valor != 0)
+      phaseActive[x-1] = 1;
+    else
+      phaseActive[x-1] = 0;
+  }
+}
+
 
 int main()
 {
@@ -31,7 +49,7 @@ int main()
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 
   // Create window with graphics context
-  GLFWwindow* window = glfwCreateWindow(1280, 720, "Dear ImGui GLFW+OpenGL3 example", NULL, NULL);
+  GLFWwindow* window = glfwCreateWindow(650, 335, "Dear ImGui GLFW+OpenGL3 example", NULL, NULL);
   if (window == NULL)
     return 1;
   glfwMakeContextCurrent(window);
@@ -46,7 +64,7 @@ int main()
   io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;         // Enable Multi-Viewport / Platform Windows
 
   // Setup Dear ImGui style
-  ImGui::StyleColorsDark();
+  ImGui::StyleColorsLight();
 
   // When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
   ImGuiStyle& style = ImGui::GetStyle();
@@ -61,6 +79,9 @@ int main()
   ImGui_ImplOpenGL3_Init(glsl_version);
 
   ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+
+  int phaseActive[16];
+  getPhaseActive(phaseActive, "192.168.10.23:161");
 
   while (!glfwWindowShouldClose(window))
   {
@@ -83,7 +104,8 @@ int main()
 
       static int IpControler[] = {192,168,10,23};
       static bool get = 0;
-      static char SM[6];
+      static char SM[100];
+      static int header = 0;
       {      
         ImGui::Begin("GET SM", NULL, window_flags);
         ImGui::SetWindowSize(ImVec2(629.0, 249.0));
@@ -91,12 +113,17 @@ int main()
         ImGui::InputInt4("IpV4", IpControler, inputServer_flags);
         for (int x = 0; x < 4; x++){
             if(IpControler[x] > 255)
-                IpControler[x] = 255;
+              IpControler[x] = 255;
         }
 
         ImGui::InputText("##source", SM, IM_ARRAYSIZE(SM));        
 
-        if(ImGui::Button("Start")) get = 1; ImGui::SameLine();
+        if(ImGui::Button("Start"))
+        {
+          header++;
+          get = 1;
+        } 
+        ImGui::SameLine();
         if(ImGui::Button("Stop")) get = 0;  
 
         ImGui::End();
@@ -105,25 +132,47 @@ int main()
       if(get)
       {
         {
-          ImGui::Begin(SM, NULL, window_flags);                            
+          //for (int x = 0; x < header; x++){
+            ImGui::Begin(SM, NULL, window_flags);                            
 
-          ImGui::Text(SM);
-          static char text[1024 * 16];
-          ImGui::InputTextMultiline("##source", text, IM_ARRAYSIZE(text),
-                                    ImVec2(-FLT_MIN, ImGui::GetTextLineHeight() * 16),
-                                     ImGuiInputTextFlags_ReadOnly);
+            ImGui::Text(SM);
+            static char text[1024 * 16];
+            ImGui::InputTextMultiline("##source", text, IM_ARRAYSIZE(text),
+                                      ImVec2(-FLT_MIN, ImGui::GetTextLineHeight() * 16),
+                                      ImGuiInputTextFlags_ReadOnly);
+            ImGui::SetWindowSize(ImVec2(629.0, 249.0));
 
-          static char ipS[30];
-          sprintf(ipS, "%d.%d.%d.%d:%d", IpControler[0],
-                  IpControler[1], IpControler[2], IpControler[3], 161);
+            static char ipS[30];
+            sprintf(ipS, "%d.%d.%d.%d:%d", IpControler[0],
+                    IpControler[1], IpControler[2], IpControler[3], 161);
 
-          int green  =  snmpGet(".1.3.6.1.4.1.1206.4.2.1.1.4.1.4.1", ipS);
-          int yellow =  snmpGet(".1.3.6.1.4.1.1206.4.2.1.1.4.1.3.1", ipS);
-          int red    =  snmpGet(".1.3.6.1.4.1.1206.4.2.1.1.4.1.2.1", ipS);
+            int greenInt  =  snmpGet(".1.3.6.1.4.1.1206.4.2.1.1.4.1.4.1", ipS);
+            int yellowInt =  snmpGet(".1.3.6.1.4.1.1206.4.2.1.1.4.1.3.1", ipS);
+            int redInt    =  snmpGet(".1.3.6.1.4.1.1206.4.2.1.1.4.1.2.1", ipS);
 
-          sprintf(text, "RED: %d \n\r GREEN: %d \n\r YELLOW: %d", red, green, yellow);
+            int greenPhase[16];
+            int yellowPhase[16];
+            int redPhase[16];
+            for(int i = 0; i<15; i++)
+              greenPhase[i] = (greenInt>>i)&1;
+            for(int i = 0; i<15; i++)
+              yellowPhase[i] = (yellowInt>>i)&1;
+            for(int i = 0; i<15; i++)
+              redPhase[i] = (redInt>>i)&1;            
 
-          ImGui::End();
+            sprintf(text, "greenPhase:  %u %u %u %u %u %u %u %u \r\n"
+                          "yellowPhase: %u %u %u %u %u %u %u %u \r\n"
+                          "redPhase:    %u %u %u %u %u %u %u %u \r\n"
+                          "phaseActive: %u %u %u %u %u %u %u %u \r\n",
+                          
+
+                               greenPhase[7],  greenPhase[6],  greenPhase[5],  greenPhase[4],  greenPhase[3],  greenPhase[2],  greenPhase[1],  greenPhase[0],
+                              yellowPhase[7], yellowPhase[6], yellowPhase[5], yellowPhase[4], yellowPhase[3], yellowPhase[2], yellowPhase[1], yellowPhase[0],
+                                 redPhase[7],    redPhase[6],    redPhase[5],    redPhase[4],    redPhase[3],    redPhase[2],    redPhase[1],    redPhase[0],
+                              phaseActive[7], phaseActive[6], phaseActive[5], phaseActive[4], phaseActive[3], phaseActive[2], phaseActive[1], phaseActive[0]);
+
+            ImGui::End();
+          //}
         } 
       }
 
