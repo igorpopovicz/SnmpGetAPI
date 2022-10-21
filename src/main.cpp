@@ -49,7 +49,7 @@ int main()
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 
   // Create window with graphics context
-  GLFWwindow* window = glfwCreateWindow(650, 335, "Dear ImGui GLFW+OpenGL3 example", NULL, NULL);
+  GLFWwindow* window = glfwCreateWindow(650, 335, "snmpGet", NULL, NULL);
   if (window == NULL)
     return 1;
   glfwMakeContextCurrent(window);
